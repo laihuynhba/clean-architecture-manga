@@ -27,7 +27,12 @@
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
     <None Include="ClientApp\src\components\Accounts.tsx" />
+    <None Include="ClientApp\src\components\CheckboxInput.tsx" />
+    <None Include="ClientApp\src\components\index.tsx" />
+    <None Include="ClientApp\src\components\register.tsx" />
+    <None Include="ClientApp\src\MyForm.tsx" />
     <None Include="ClientApp\src\store\Accounts.ts" />
+    <None Include="ClientApp\src\Styles.tsx" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
