@@ -2,6 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { ApplicationState } from '../store';
 import * as AccountsStore from '../store/Accounts';
+import {Link} from "react-router-dom";
+import {NavLink} from "reactstrap";
 
 type AccountsProps =
     AccountsStore.AccountsState
@@ -56,7 +58,7 @@ class Accounts extends React.PureComponent<AccountsProps> {
         <tbody>
           {this.props.customer.accounts.map((account: AccountsStore.Account) =>
             <tr key={account.accountId}>
-              <td>{account.accountId}</td>
+              <td><NavLink tag={Link} className="text-dark" to="/transactions/{account.accountId}">Transactions</NavLink> </td>
               <td>{account.currentBalance}</td>
                 <td>
 
