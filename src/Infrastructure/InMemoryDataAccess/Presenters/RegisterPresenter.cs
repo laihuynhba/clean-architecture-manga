@@ -46,7 +46,7 @@ namespace Infrastructure.InMemoryDataAccess.Presenters
         ///
         /// </summary>
         /// <param name="message"></param>
-        public void CustomerAlreadyRegistered(RegisterOutput output)
+        public void HandleAlreadyRegisteredCustomer(RegisterOutput output)
         {
             this.AlreadyRegistered.Add(output);
         }

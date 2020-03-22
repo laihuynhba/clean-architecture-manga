@@ -4,7 +4,7 @@
 
 namespace Application.UseCases
 {
-    using System.Linq;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Boundaries.Register;
     using Domain.Accounts;
@@ -12,7 +12,6 @@ namespace Application.UseCases
     using Domain.Customers.ValueObjects;
     using Domain.Security;
     using Domain.Security.Services;
-    using Domain.Security.ValueObjects;
     using Services;
 
     /// <summary>
@@ -76,49 +75,68 @@ namespace Application.UseCases
                 return;
             }
 
-            if (this._userService.GetCustomerId() is CustomerId customerId)
+            var user = this._userService.GetUser();
+
+            if (await this.VerifyCustomerAlreadyRegistered(user))
             {
-                if (await this._customerService.IsCustomerRegistered(customerId)
-                    .ConfigureAwait(false))
-                {
-                    var existingCustomer = await this._customerRepository.GetBy(customerId)
-                        .ConfigureAwait(false);
-                    var existingAccount = await this._accountRepository.GetAccount(existingCustomer.Accounts.GetAccountIds().First())
-                        .ConfigureAwait(false);
-
-                    var output = new RegisterOutput(
-                        this._userService.GetExternalUserId(),
-                        existingCustomer,
-                        existingAccount);
-
-                    this._outputPort.CustomerAlreadyRegistered(output);
-                    return;
-                }
+                return;
             }
 
-            var customer = await this._customerService.CreateCustomer(input.SSN, this._userService.GetUserName())
-                .ConfigureAwait(false);
-            var account = await this._accountService.OpenCheckingAccount(customer.Id, input.InitialAmount)
-                .ConfigureAwait(false);
-            var user = await this._securityService
-                .CreateUserCredentials(customer.Id, this._userService.GetExternalUserId())
+            var customer = await this._customerService
+                .CreateCustomer(input.SSN, user.Name.Value)
                 .ConfigureAwait(false);
 
-            customer.Register(account.Id);
+            var account = await this._accountService
+                .OpenCheckingAccount(customer.Id, input.InitialAmount)
+                .ConfigureAwait(false);
+
+            await this._securityService
+                .CreateUserCredentials(user, customer.Id)
+                .ConfigureAwait(false);
+
+            customer.Assign(account.Id);
 
             await this._unitOfWork.Save()
                 .ConfigureAwait(false);
 
-            this.BuildOutput(this._userService.GetExternalUserId(), customer, account);
+            this.BuildOutput(user, customer, new List<IAccount> { account });
+        }
+
+        private async Task<bool> VerifyCustomerAlreadyRegistered(IUser user)
+        {
+            if (!(user.CustomerId is CustomerId customerId))
+            {
+                return false;
+            }
+
+            if (!await this._customerService.IsCustomerRegistered(customerId)
+                .ConfigureAwait(false))
+            {
+                return false;
+            }
+
+            var existingCustomer = await this._customerRepository.GetBy(customerId)
+                .ConfigureAwait(false);
+            var existingAccounts = await this._accountRepository.GetBy(customerId)
+                .ConfigureAwait(false);
+
+            var output = new RegisterOutput(
+                user,
+                existingCustomer,
+                existingAccounts);
+
+            this._outputPort.HandleAlreadyRegisteredCustomer(output);
+            return true;
+
         }
 
         private void BuildOutput(
-            ExternalUserId externalUserId,
+            IUser user,
             ICustomer customer,
-            IAccount account)
+            IList<IAccount> account)
         {
             var output = new RegisterOutput(
-                externalUserId,
+                user,
                 customer,
                 account);
             this._outputPort.Standard(output);

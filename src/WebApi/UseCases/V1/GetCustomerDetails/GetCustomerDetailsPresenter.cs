@@ -1,9 +1,9 @@
 namespace WebApi.UseCases.V1.GetCustomerDetails
 {
-    using System.Collections.Generic;
     using Application.Boundaries.GetCustomerDetails;
     using Microsoft.AspNetCore.Mvc;
     using ViewModels;
+    using Customer = Domain.Customers.Customer;
 
     public sealed class GetCustomerDetailsPresenter : IOutputPort
     {
@@ -16,34 +16,8 @@ namespace WebApi.UseCases.V1.GetCustomerDetails
 
         public void Standard(GetCustomerDetailsOutput getCustomerDetailsOutput)
         {
-            List<AccountDetailsModel> accounts = new List<AccountDetailsModel>();
-
-            foreach (var account in getCustomerDetailsOutput.Accounts)
-            {
-                List<TransactionModel> transactions = new List<TransactionModel>();
-
-                foreach (var item in account.Transactions)
-                {
-                    var transaction = new TransactionModel(
-                        item.Amount,
-                        item.Description,
-                        item.TransactionDate);
-
-                    transactions.Add(transaction);
-                }
-
-                accounts.Add(new AccountDetailsModel(
-                    account.AccountId,
-                    account.CurrentBalance,
-                    transactions));
-            }
-
-            var getCustomerDetailsResponse = new GetCustomerDetailsResponse(
-                getCustomerDetailsOutput.CustomerId,
-                getCustomerDetailsOutput.SSN,
-                getCustomerDetailsOutput.Name,
-                accounts);
-
+            var customerModel = new CustomerModel((Customer) getCustomerDetailsOutput.Customer);
+            var getCustomerDetailsResponse = new GetCustomerDetailsResponse(customerModel);
             this.ViewModel = new OkObjectResult(getCustomerDetailsResponse);
         }
 

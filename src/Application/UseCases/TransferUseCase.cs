@@ -59,9 +59,11 @@ namespace Application.UseCases
 
             try
             {
-                var originAccount = await this._accountRepository.GetAccount(input.OriginAccountId)
+                var originAccount = await this._accountRepository
+                    .GetAccount(input.OriginAccountId)
                     .ConfigureAwait(false);
-                var destinationAccount = await this._accountRepository.GetAccount(input.DestinationAccountId)
+                var destinationAccount = await this._accountRepository
+                    .GetAccount(input.DestinationAccountId)
                     .ConfigureAwait(false);
 
                 var debit = await this._accountService.Withdraw(originAccount, input.Amount)

@@ -20,10 +20,11 @@ namespace Domain.Security
     {
         /// <summary>
         ///     Creates new User.
-        /// </summary>
+        /// </summary>s
         /// <param name="customer">Customer object.</param>
         /// <param name="externalUserId">ExternalUserId.</param>
+        /// <param name="name">Name.</param>
         /// <returns>New User instance.</returns>
-        IUser NewUser(CustomerId customer, ExternalUserId externalUserId);
+        IUser NewUser(CustomerId? customer, ExternalUserId externalUserId, Name? name);
     }
 }

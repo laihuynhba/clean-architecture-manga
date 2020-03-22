@@ -20,9 +20,9 @@ namespace UnitTests.TestFixtures
             this.UserRepository = new UserRepository(this.Context);
             this.UnitOfWork = new UnitOfWork(this.Context);
             this.EntityFactory = new EntityFactory();
-            this.TestUserService = new TestUserService();
+            this.TestUserService = new TestUserService(this.EntityFactory);
             this.CustomerService = new CustomerService(this.EntityFactory, this.CustomerRepository);
-            this.SecurityService = new SecurityService(this.EntityFactory, this.UserRepository);
+            this.SecurityService = new SecurityService(this.UserRepository);
             this.AccountService = new AccountService(this.EntityFactory, this.AccountRepository);
         }
 

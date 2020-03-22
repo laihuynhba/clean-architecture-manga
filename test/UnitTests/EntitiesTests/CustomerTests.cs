@@ -19,7 +19,7 @@ namespace UnitTests.EntitiesTests
             var account = entityFactory.NewAccount(sut.Id);
 
             // Act
-            sut.Register(account.Id);
+            sut.Assign(account.Id);
 
             // Assert
             Assert.Single(sut.Accounts.GetAccountIds());

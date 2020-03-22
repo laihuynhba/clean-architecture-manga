@@ -35,7 +35,7 @@ namespace Domain.Customers
         public AccountCollection Accounts { get; protected set; }
 
         /// <inheritdoc />
-        public void Register(AccountId accountId)
+        public void Assign(AccountId accountId)
         {
             this.Accounts ??= new AccountCollection();
             this.Accounts.Add(accountId);

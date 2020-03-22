@@ -43,7 +43,7 @@ namespace Infrastructure.EntityFrameworkDataAccess.Entities
         /// </summary>
         /// <param name="credits">Credits.</param>
         /// <param name="debits">Debits.</param>
-        public void Load(IList<Credit> credits, IList<Debit> debits)
+        public void Load(IEnumerable<Credit> credits, IEnumerable<Debit> debits)
         {
             this.Credits = new CreditsCollection();
             this.Credits.Add(credits);

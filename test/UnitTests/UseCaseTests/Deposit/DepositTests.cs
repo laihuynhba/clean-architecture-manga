@@ -36,7 +36,8 @@ namespace UnitTests.UseCaseTests.Deposit
                     new PositiveMoney(amount)));
 
             var output = presenter.Deposits.Last();
-            Assert.Equal(amount, output.Transaction.Amount.ToMoney().ToDecimal());
+            var actualDebit = Assert.IsType<Debit>(output.Transaction);
+            Assert.Equal(amount, actualDebit.Amount.ToMoney().ToDecimal());
         }
 
         [Theory]

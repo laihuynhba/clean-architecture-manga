@@ -31,7 +31,7 @@ namespace Infrastructure.EntityFrameworkDataAccess.Configuration
 
             builder.Property(b => b.CustomerId)
                 .HasConversion(
-                    v => v.ToGuid(),
+                    v => v.Value.ToGuid(),
                     v => new CustomerId(v))
                 .IsRequired();
 

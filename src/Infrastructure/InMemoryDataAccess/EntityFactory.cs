@@ -48,9 +48,10 @@ namespace Infrastructure.InMemoryDataAccess
             Array.Empty<AccountId>()
         );
 
-        public IUser NewUser(CustomerId customerId, ExternalUserId externalUserId) => new User(
+        public IUser NewUser(CustomerId? customerId, ExternalUserId externalUserId, Name? name) => new User(
             customerId,
-            externalUserId
+            externalUserId,
+            name
         );
     }
 }

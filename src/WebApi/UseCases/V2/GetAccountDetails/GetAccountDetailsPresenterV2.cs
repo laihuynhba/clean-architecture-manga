@@ -19,20 +19,18 @@ namespace WebApi.UseCases.V2.GetAccountDetails
         {
             using (var dataTable = new DataTable())
             {
-                dataTable.Columns.Add("Amount", typeof(decimal));
-                dataTable.Columns.Add("Description", typeof(string));
-                dataTable.Columns.Add("TransactionDate", typeof(DateTime));
+                dataTable.Columns.Add("AccountId", typeof(Guid));
+                dataTable.Columns.Add("Amount", typeof(Decimal));
 
-                foreach (var item in getAccountDetailsOutput.Transactions)
-                {
-                    dataTable.Rows.Add(item.Amount.ToMoney().ToDecimal(), item.Description, item.TransactionDate);
-                }
+                var account = (Domain.Accounts.Account)getAccountDetailsOutput.Account;
+
+                dataTable.Rows.Add(account.Id.ToGuid(), account.GetCurrentBalance());
 
                 byte[] fileContents;
 
                 using (ExcelPackage pck = new ExcelPackage())
                 {
-                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add(getAccountDetailsOutput.AccountId.ToString());
+                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add(account.Id.ToString());
                     ws.Cells["A1"].LoadFromDataTable(dataTable, true);
                     ws.Row(1).Style.Font.Bold = true;
                     ws.Column(3).Style.Numberformat.Format = "dd/MM/yyyy HH:mm";

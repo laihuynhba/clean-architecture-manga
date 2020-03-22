@@ -13,12 +13,10 @@ namespace WebApi.UseCases.V1.GetAccountDetails
     {
         public GetAccountDetailsResponse(
             AccountId accountId,
-            Money currentBalance,
-            List<TransactionModel> transactions)
+            Money currentBalance)
         {
             this.AccountId = accountId.ToGuid();
             this.CurrentBalance = currentBalance.ToDecimal();
-            this.Transactions = transactions;
         }
 
         /// <summary>
@@ -32,11 +30,5 @@ namespace WebApi.UseCases.V1.GetAccountDetails
         /// </summary>
         [Required]
         public decimal CurrentBalance { get; }
-
-        /// <summary>
-        ///     Gets transactions.
-        /// </summary>
-        [Required]
-        public IList<TransactionModel> Transactions { get; }
     }
 }

@@ -3,39 +3,44 @@ namespace WebApi.ViewModels
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.Diagnostics.CodeAnalysis;
+    using Domain.Accounts.Credits;
     using Domain.Accounts.ValueObjects;
 
     /// <summary>
     ///     Transaction.
     /// </summary>
-    public sealed class TransactionModel
+    public sealed class CreditModel
     {
-        public TransactionModel(PositiveMoney amount, string description, DateTime transactionDate)
+        public CreditModel(Credit credit)
         {
-            this.Amount = amount.ToMoney().ToDecimal();
-            this.Description = description;
-            this.TransactionDate = transactionDate;
+            this.TransactionId = credit.Id.ToGuid();
+            this.Amount = credit.Amount.ToMoney().ToDecimal();
+            this.Description = "Credit";
+            this.TransactionDate = credit.TransactionDate;
         }
 
         /// <summary>
         ///     Gets Amount.
         /// </summary>
         [Required]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        public Guid TransactionId { get; }
+
+        /// <summary>
+        ///     Gets Amount.
+        /// </summary>
+        [Required]
         public decimal Amount { get; }
 
         /// <summary>
         ///     Gets Description.
         /// </summary>
         [Required]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public string Description { get; }
 
         /// <summary>
         ///     Gets Transaction Date.
         /// </summary>
         [Required]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public DateTime TransactionDate { get; }
     }
 }

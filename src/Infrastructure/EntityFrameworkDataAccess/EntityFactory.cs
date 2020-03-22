@@ -45,7 +45,7 @@ namespace Infrastructure.EntityFrameworkDataAccess
             SSN ssn,
             Name name) => new Customer(ssn, name);
 
-        public IUser NewUser(CustomerId customerId, ExternalUserId externalUserId) =>
-            new User(customerId, externalUserId);
+        public IUser NewUser(CustomerId? customerId, ExternalUserId externalUserId, Name? name) =>
+            new User(customerId, externalUserId, name);
     }
 }

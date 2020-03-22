@@ -28,7 +28,8 @@ namespace IntegrationTests.EntityFrameworkTests
 
             var user = factory.NewUser(
                 customer.Id,
-                new ExternalUserId("github/ivanpaulovich"));
+                new ExternalUserId("github/ivanpaulovich"),
+                new Name("Ivan Paulovich"));
 
             using (var context = new MangaContext(options))
             {

@@ -4,6 +4,7 @@ namespace WebApi.ViewModels
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Diagnostics.CodeAnalysis;
+    using Domain.Accounts;
     using Domain.Accounts.ValueObjects;
 
     /// <summary>
@@ -11,35 +12,22 @@ namespace WebApi.ViewModels
     /// </summary>
     public sealed class AccountDetailsModel
     {
-        public AccountDetailsModel(
-            AccountId accountId,
-            Money currentBalance,
-            List<TransactionModel> transactions)
+        public AccountDetailsModel(IAccount account)
         {
-            this.AccountId = accountId.ToGuid();
-            this.CurrentBalance = currentBalance.ToDecimal();
-            this.Transactions = transactions;
+            this.AccountId = account.Id.ToGuid();
+            this.CurrentBalance = account.GetCurrentBalance().ToDecimal();
         }
 
         /// <summary>
         ///     Gets account ID.
         /// </summary>
         [Required]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public Guid AccountId { get; }
 
         /// <summary>
         ///     Gets current Balance.
         /// </summary>
         [Required]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public decimal CurrentBalance { get; }
-
-        /// <summary>
-        ///     Gets transactions.
-        /// </summary>
-        [Required]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        public List<TransactionModel> Transactions { get; }
     }
 }

@@ -30,7 +30,8 @@ namespace Infrastructure.InMemoryDataAccess
 
             var user1 = new User(
                 customer.Id,
-                new ExternalUserId("github/ivanpaulovich"));
+                new ExternalUserId("github/ivanpaulovich"),
+                customer.Name);
 
             var credit = new Credit(
                 new CreditId(Guid.NewGuid()),
@@ -64,7 +65,8 @@ namespace Infrastructure.InMemoryDataAccess
 
             var secondUser = new User(
                 secondCustomer.Id,
-                new ExternalUserId("github/andrepaulovich"));
+                new ExternalUserId("github/andrepaulovich"),
+                secondCustomer.Name);
 
             var secondAccount = new Account(
                 SecondAccountId,

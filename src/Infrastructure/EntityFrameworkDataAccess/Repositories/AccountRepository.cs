@@ -1,12 +1,14 @@
 namespace Infrastructure.EntityFrameworkDataAccess.Repositories
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Domain.Accounts;
     using Domain.Accounts.Credits;
     using Domain.Accounts.Debits;
     using Domain.Accounts.ValueObjects;
+    using Domain.Customers.ValueObjects;
     using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
     using Account = Entities.Account;
@@ -23,10 +25,16 @@ namespace Infrastructure.EntityFrameworkDataAccess.Repositories
                             throw new ArgumentNullException(nameof(context));
         }
 
+        public Task<IList<IAccount>> GetBy(CustomerId customerId) => throw new NotImplementedException();
+
         public async Task Add(IAccount account, ICredit credit)
         {
-            await this._context.Accounts.AddAsync((Account)account);
-            await this._context.Credits.AddAsync((Credit)credit);
+            await this._context
+                .Accounts
+                .AddAsync((Account)account);
+            await this._context
+                .Credits
+                .AddAsync((Credit)credit);
         }
 
         public async Task Delete(IAccount account)
@@ -56,11 +64,13 @@ namespace Infrastructure.EntityFrameworkDataAccess.Repositories
                 throw new AccountNotFoundException($"The account {id} does not exist or is not processed yet.");
             }
 
-            var credits = this._context.Credits
+            var credits = this._context
+                .Credits
                 .Where(e => e.AccountId.Equals(id))
                 .ToList();
 
-            var debits = this._context.Debits
+            var debits = this._context
+                .Debits
                 .Where(e => e.AccountId.Equals(id))
                 .ToList();
 
@@ -71,12 +81,16 @@ namespace Infrastructure.EntityFrameworkDataAccess.Repositories
 
         public async Task Update(IAccount account, ICredit credit)
         {
-            await this._context.Credits.AddAsync((Credit)credit);
+            await this._context
+                .Credits
+                .AddAsync((Credit)credit);
         }
 
         public async Task Update(IAccount account, IDebit debit)
         {
-            await this._context.Debits.AddAsync((Debit)debit);
+            await this._context
+                .Debits
+                .AddAsync((Debit)debit);
         }
     }
 }

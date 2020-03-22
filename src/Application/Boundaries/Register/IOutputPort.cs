@@ -14,6 +14,6 @@ namespace Application.Boundaries.Register
         ///     Informs the user is already registered.
         /// </summary>
         /// <param name="output">Details.</param>
-        void CustomerAlreadyRegistered(RegisterOutput output);
+        void HandleAlreadyRegisteredCustomer(RegisterOutput output);
     }
 }

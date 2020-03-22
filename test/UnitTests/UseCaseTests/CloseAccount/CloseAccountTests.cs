@@ -77,13 +77,13 @@ namespace UnitTests.UseCaseTests.CloseAccount
 
             await withdrawUseCase.Execute(new Application.Boundaries.Withdraw.WithdrawInput(
                 MangaContext.DefaultAccountId,
-                new PositiveMoney(getAccountDetailtOutput.CurrentBalance.ToDecimal())));
+                new PositiveMoney(getAccountDetailtOutput.Account.GetCurrentBalance().ToDecimal())));
 
             var input = new CloseAccountInput(
                 MangaContext.DefaultAccountId);
             await sut.Execute(input);
 
-            Assert.Equal(input.AccountId, closeAccountPresenter.ClosedAccounts.First().AccountId);
+            Assert.Equal(input.AccountId, closeAccountPresenter.ClosedAccounts.First().Account.Id);
         }
     }
 }

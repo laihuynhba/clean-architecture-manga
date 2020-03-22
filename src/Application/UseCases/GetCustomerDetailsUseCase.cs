@@ -4,16 +4,12 @@
 
 namespace Application.UseCases
 {
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Boundaries.GetCustomerDetails;
-    using Domain.Accounts;
-    using Domain.Accounts.ValueObjects;
     using Domain.Customers;
     using Domain.Customers.ValueObjects;
+    using Domain.Security;
     using Domain.Security.Services;
-    using Domain.Security.ValueObjects;
-    using Account = Boundaries.GetCustomerDetails.Account;
 
     /// <summary>
     ///     Get Customer Details
@@ -25,7 +21,6 @@ namespace Application.UseCases
     /// </summary>
     public sealed class GetCustomerDetailsUseCase : IUseCase
     {
-        private readonly IAccountRepository _accountRepository;
         private readonly ICustomerRepository _customerRepository;
         private readonly IOutputPort _outputPort;
         private readonly IUserService _userService;
@@ -36,17 +31,14 @@ namespace Application.UseCases
         /// <param name="userService">User Service.</param>
         /// <param name="outputPort">Output Port.</param>
         /// <param name="customerRepository">Customer Repository.</param>
-        /// <param name="accountRepository">Account Repository.</param>
         public GetCustomerDetailsUseCase(
             IUserService userService,
             IOutputPort outputPort,
-            ICustomerRepository customerRepository,
-            IAccountRepository accountRepository)
+            ICustomerRepository customerRepository)
         {
             this._userService = userService;
             this._outputPort = outputPort;
             this._customerRepository = customerRepository;
-            this._accountRepository = accountRepository;
         }
 
         /// <summary>
@@ -62,13 +54,16 @@ namespace Application.UseCases
                 return;
             }
 
+            IUser user = this._userService.GetUser();
+
             ICustomer customer;
 
-            if (this._userService.GetCustomerId() is CustomerId customerId)
+            if (user.CustomerId is CustomerId customerId)
             {
                 try
                 {
-                    customer = await this._customerRepository.GetBy(customerId)
+                    customer = await this._customerRepository
+                        .GetBy(customerId)
                         .ConfigureAwait(false);
                 }
                 catch (CustomerNotFoundException ex)
@@ -83,42 +78,12 @@ namespace Application.UseCases
                 return;
             }
 
-            var accounts = new List<Account>();
-
-            foreach (AccountId accountId in customer.Accounts.GetAccountIds())
-            {
-                IAccount account;
-
-                try
-                {
-                    account = await this._accountRepository.GetAccount(accountId)
-                        .ConfigureAwait(false);
-                }
-                catch (AccountNotFoundException ex)
-                {
-                    this._outputPort.NotFound(ex.Message);
-                    return;
-                }
-
-                var outputAccount = new Account(account);
-                accounts.Add(outputAccount);
-            }
-
-            this.BuildOutput(
-                this._userService.GetExternalUserId(),
-                customer,
-                accounts);
+            this.BuildOutput(customer);
         }
 
-        private void BuildOutput(
-            ExternalUserId externalUserId,
-            ICustomer customer,
-            List<Account> accounts)
+        private void BuildOutput(ICustomer customer)
         {
-            var output = new GetCustomerDetailsOutput(
-                externalUserId,
-                customer,
-                accounts);
+            var output = new GetCustomerDetailsOutput(customer);
             this._outputPort.Standard(output);
         }
     }
