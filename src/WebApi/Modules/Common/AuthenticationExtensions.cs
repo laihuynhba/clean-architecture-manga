@@ -25,7 +25,7 @@ namespace WebApi.Modules.Common
 
             if (useFake)
             {
-                services.AddSingleton<IUserService, TestUserService>();
+                services.AddScoped<IUserService, TestUserService>();
             }
             else
             {

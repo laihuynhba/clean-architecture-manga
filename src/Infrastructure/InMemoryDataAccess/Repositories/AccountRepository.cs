@@ -18,7 +18,16 @@ namespace Infrastructure.InMemoryDataAccess.Repositories
             this._context = context;
         }
 
-        public Task<IList<IAccount>> GetBy(CustomerId customerId) => throw new System.NotImplementedException();
+        public async Task<IList<IAccount>> GetBy(CustomerId customerId)
+        {
+            var accounts = this._context.Accounts
+                .Where(e => e.CustomerId.Equals(customerId))
+                .Select(e => (IAccount)e)
+                .ToList();
+
+            return await Task.FromResult(accounts)
+                .ConfigureAwait(false);
+        }
 
         public async Task Add(IAccount account, ICredit credit)
         {
@@ -55,27 +64,27 @@ namespace Infrastructure.InMemoryDataAccess.Repositories
                 throw new AccountNotFoundException($"The account {accountId} does not exist or is not processed yet.");
             }
 
-            return await Task.FromResult<Domain.Accounts.Account>(account)
+            return await Task.FromResult<Account>(account)
                 .ConfigureAwait(false);
         }
 
         public async Task Update(IAccount account, ICredit credit)
         {
-            Domain.Accounts.Account accountOld = this._context
+            Account accountOld = this._context
                 .Accounts
                 .SingleOrDefault(e => e.Id.Equals(account.Id));
 
-            accountOld = (Domain.Accounts.Account)account;
+            accountOld = (Account)account;
             await Task.CompletedTask
                 .ConfigureAwait(false);
         }
 
         public async Task Update(IAccount account, IDebit debit)
         {
-            Domain.Accounts.Account accountOld = this._context.Accounts
+            Account accountOld = this._context.Accounts
                 .SingleOrDefault(e => e.Id.Equals(account.Id));
 
-            accountOld = (Domain.Accounts.Account)account;
+            accountOld = (Account)account;
             await Task.CompletedTask
                 .ConfigureAwait(false);
         }

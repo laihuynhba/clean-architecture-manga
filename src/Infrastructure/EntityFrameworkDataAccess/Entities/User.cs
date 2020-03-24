@@ -10,15 +10,16 @@ namespace Infrastructure.EntityFrameworkDataAccess.Entities
     /// <summary>
     ///     User.
     /// </summary>
-    public class User : Domain.Security.User
+    public sealed class User : Domain.Security.User
     {
-        public ExternalUserId ExternalUserId { get; set; }
+        /// <inheritdoc />
+        public override ExternalUserId ExternalUserId {  get; }
 
         /// <inheritdoc />
-        public Name? Name { get; set; }
+        public override Name? Name { get; }
 
         /// <inheritdoc />
-        public CustomerId? CustomerId { get; set; }
+        public override CustomerId? CustomerId { get; protected set; }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="User" /> class.
@@ -32,10 +33,7 @@ namespace Infrastructure.EntityFrameworkDataAccess.Entities
             this.Name = name;
         }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="User" /> class.
-        /// </summary>
-        protected User()
+        private User()
         {
         }
     }

@@ -17,29 +17,27 @@ namespace WebApi.UseCases.V2.GetAccountDetails
 
         public void Standard(GetAccountDetailsOutput getAccountDetailsOutput)
         {
-            using (var dataTable = new DataTable())
+            using var dataTable = new DataTable();
+            dataTable.Columns.Add("AccountId", typeof(Guid));
+            dataTable.Columns.Add("Amount", typeof(decimal));
+
+            var account = (Domain.Accounts.Account)getAccountDetailsOutput.Account;
+
+            dataTable.Rows.Add(account.Id.ToGuid(), account.GetCurrentBalance().ToDecimal());
+
+            byte[] fileContents;
+
+            using (ExcelPackage pck = new ExcelPackage())
             {
-                dataTable.Columns.Add("AccountId", typeof(Guid));
-                dataTable.Columns.Add("Amount", typeof(Decimal));
-
-                var account = (Domain.Accounts.Account)getAccountDetailsOutput.Account;
-
-                dataTable.Rows.Add(account.Id.ToGuid(), account.GetCurrentBalance());
-
-                byte[] fileContents;
-
-                using (ExcelPackage pck = new ExcelPackage())
-                {
-                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add(account.Id.ToString());
-                    ws.Cells["A1"].LoadFromDataTable(dataTable, true);
-                    ws.Row(1).Style.Font.Bold = true;
-                    ws.Column(3).Style.Numberformat.Format = "dd/MM/yyyy HH:mm";
-                    fileContents = pck.GetAsByteArray();
-                }
-
-                this.ViewModel = new FileContentResult(fileContents,
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                ExcelWorksheet ws = pck.Workbook.Worksheets.Add(account.Id.ToString());
+                ws.Cells["A1"].LoadFromDataTable(dataTable, true);
+                ws.Row(1).Style.Font.Bold = true;
+                ws.Column(3).Style.Numberformat.Format = "dd/MM/yyyy HH:mm";
+                fileContents = pck.GetAsByteArray();
             }
+
+            this.ViewModel = new FileContentResult(fileContents,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
         public void WriteError(string message)

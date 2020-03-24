@@ -31,7 +31,7 @@ namespace ComponentTests.V2
         private async Task GetAccount(string accountId)
         {
             var client = this._factory.CreateClient();
-            string result = await client.GetStringAsync($"/api/v2/Accounts/{accountId}")
+            var result = await client.GetAsync($"/api/v2/Accounts/{accountId}")
                 .ConfigureAwait(false);
         }
 
@@ -48,16 +48,16 @@ namespace ComponentTests.V2
             var response = await client.PostAsync("api/v1/Customers", content)
                 .ConfigureAwait(false);
 
-            response.EnsureSuccessStatusCode();
-
             string responseString = await response.Content
                 .ReadAsStringAsync()
                 .ConfigureAwait(false);
 
+            response.EnsureSuccessStatusCode();
+
             Assert.Contains("customerId", responseString);
             JObject customer = JsonConvert.DeserializeObject<JObject>(responseString);
 
-            string customerId = customer["customerId"].Value<string>();
+            string customerId = customer["customer"]["customerId"].Value<string>();
             string accountId = ((JContainer)customer["accounts"]).First["accountId"].Value<string>();
 
             return new Tuple<string, string>(customerId, accountId);

@@ -6,13 +6,13 @@ namespace Infrastructure.InMemoryDataAccess
     public sealed class User : Domain.Security.User
     {
         /// <inheritdoc />
-        public ExternalUserId ExternalUserId { get; set; }
+        public override ExternalUserId ExternalUserId { get; }
 
         /// <inheritdoc />
-        public Name? Name { get; set; }
+        public override Name? Name { get; }
 
         /// <inheritdoc />
-        public CustomerId? CustomerId { get; private set; }
+        public override CustomerId? CustomerId { get; protected set; }
 
         public User(CustomerId? customerId, ExternalUserId externalUserId, Name? name)
         {
